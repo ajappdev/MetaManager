@@ -35,4 +35,3 @@ jobs:
             docker stop meta_manager || true
             docker rm meta_manager || true
             docker run -d -p 4000:4000 --name meta_manager ${{ secrets.DOCKERHUB_USERNAME }}/meta_manager:latest
-            docker images ${{ secrets.DOCKERHUB_USERNAME }}/meta_manager --format "{{.ID}}" | xargs -r docker rmi

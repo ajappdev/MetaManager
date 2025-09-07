@@ -32,6 +32,6 @@ jobs:
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
             docker pull ${{ secrets.DOCKERHUB_USERNAME }}/meta_manager:latest
-            docker stop my-flask-app || true
-            docker rm my-flask-app || true
-            docker run -d -p 4000:4000 --name my-flask-app ${{ secrets.DOCKERHUB_USERNAME }}/my-flask-app:latest
+            docker stop meta_manager || true
+            docker rm meta_manager || true
+            docker run -d -p 4000:4000 --name meta_manager ${{ secrets.DOCKERHUB_USERNAME }}/meta_manager:latest

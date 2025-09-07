@@ -34,4 +34,4 @@ jobs:
             docker pull ${{ secrets.DOCKERHUB_USERNAME }}/meta_manager:latest
             docker stop meta_manager || true
             docker rm meta_manager || true
-            docker run -d -p 4000:4000 --name meta_manager ${{ secrets.DOCKERHUB_USERNAME }}/meta_manager:latest
+            docker run -d -p 4000:4000 -e FLASK_API_KEY=${{ secrets.FLASK_API_KEY }} --name meta_manager ${{ secrets.DOCKERHUB_USERNAME }}/meta_manager:latest

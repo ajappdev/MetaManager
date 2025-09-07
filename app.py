@@ -3,9 +3,12 @@ import os
 import logging
 from flask import Flask, request, jsonify
 from meta import PostToFacebookPage
+from functools import wraps
 
 logging.basicConfig(level=logging.INFO)
 app = Flask(__name__)
+
+API_KEY = os.getenv("FLASK_API_KEY")
 
 def build_poster_from_headers():
     """Build PostToFacebookPage instance using headers"""
@@ -22,12 +25,23 @@ def build_poster_from_headers():
     poster = PostToFacebookPage(app_id, app_secret, page_id, token)
     return poster, None, None
 
+def require_api_key(f):
+    @wraps(f)
+    def decorated(*args, **kwargs):
+        key = request.headers.get("X-API-KEY")
+        if not key or key != API_KEY:
+            return jsonify({"error": "Unauthorized"}), 401
+        return f(*args, **kwargs)
+    return decorated
+
 @app.route('/health', methods=['GET'])
+@require_api_key
 def health():
     "This function tests if the server is running"
     return jsonify({'status': 'ok'})
 
 @app.route('/fb/post-images', methods=['POST'])
+@require_api_key
 def fb_post_images():
     poster, err_resp, code = build_poster_from_headers()
     if err_resp: return err_resp, code
@@ -45,6 +59,7 @@ def fb_post_images():
         return jsonify({'error': str(e)}), 500
 
 @app.route('/fb/upload-reel', methods=['POST'])
+@require_api_key
 def fb_upload_reel():
     poster, err_resp, code = build_poster_from_headers()
     if err_resp: return err_resp, code
@@ -64,6 +79,7 @@ def fb_upload_reel():
         return jsonify({'error': str(e)}), 500
 
 @app.route('/ig/post-carousel', methods=['POST'])
+@require_api_key
 def ig_post_carousel():
     poster, err_resp, code = build_poster_from_headers()
     if err_resp: return err_resp, code
@@ -81,6 +97,7 @@ def ig_post_carousel():
         return jsonify({'error': str(e)}), 500
     
 @app.route('/ig/post-image', methods=['POST'])
+@require_api_key
 def ig_post_image():
     poster, err_resp, code = build_poster_from_headers()
     if err_resp: return err_resp, code
@@ -100,6 +117,7 @@ def ig_post_image():
     
 
 @app.route('/ig/upload-reel', methods=['POST'])
+@require_api_key
 def ig_upload_reel():
     poster, err_resp, code = build_poster_from_headers()
     if err_resp: return err_resp, code

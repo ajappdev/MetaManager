@@ -24,6 +24,7 @@ def build_poster_from_headers():
 
 @app.route('/health', methods=['GET'])
 def health():
+    "This function tests if the server is running"
     return jsonify({'status': 'ok'})
 
 @app.route('/fb/post-images', methods=['POST'])
